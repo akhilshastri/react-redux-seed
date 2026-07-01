@@ -225,3 +225,9 @@ export const endRefreshSession = (): void => {
     // ignore
   }
 }
+
+/** Reset all in-memory + persisted mock state between tests. */
+export const resetDb = (): void => {
+  users = seedUsers()
+  endRefreshSession()
+}
