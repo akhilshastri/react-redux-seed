@@ -13,6 +13,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "e2e": "playwright test",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
     "gen": "plop --plopfile plopfile.mjs",
     "prepare": "husky"
   },
@@ -79,6 +82,7 @@
     "typescript-eslint": "^8.62.1",
     "vite": "^8.1.2",
     "vite-plugin-pwa": "^1.3.0",
+    "vitepress": "^1.6.4",
     "vitest": "^4.1.9"
   },
   "msw": {
