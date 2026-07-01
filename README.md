@@ -87,6 +87,19 @@ See [ADR 0004](docs/adr/0004-auth-security-defaults.md).
 real API, so a built `dist` needs one to show data. MSW is dev/test only; the Workbox SW owns prod.
 See [ADR 0006](docs/adr/0006-installable-shell-pwa.md).
 
+## Swap to a real backend
+
+Nothing is coupled to MSW. Point the app at a real API with two env vars — no code change:
+
+```bash
+VITE_API_BASE_URL=https://api.example.com
+VITE_API_MOCK=false
+```
+
+The http client already sends the Bearer token + refresh cookie, and API responses are validated
+against their Zod schemas at the boundary. The endpoint contract is in
+[how-to/08](docs/how-to/08-real-backend.md).
+
 ## Testing
 
 - **Vitest** (jsdom) uses MSW's Node `setupServer`; each render gets a **fresh Redux store**.

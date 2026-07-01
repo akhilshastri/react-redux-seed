@@ -21,6 +21,7 @@ export default defineConfig({
             { text: '5. Forms (RHF + Zod)', link: '/how-to/05-forms' },
             { text: '6. The DataGrid', link: '/how-to/06-datagrid' },
             { text: '7. Auth & RBAC', link: '/how-to/07-auth-and-rbac' },
+            { text: '8. Real backend', link: '/how-to/08-real-backend' },
           ],
         },
       ],

@@ -1,10 +1,14 @@
+import { type z } from 'zod'
+
 import { API_BASE_URL } from '@/shared/config/constants'
 
 import { getAccessToken, setAccessToken } from './access-token'
 import { ApiError } from './api-error'
 
-export interface HttpOptions extends Omit<RequestInit, 'body'> {
+export interface HttpOptions<T = unknown> extends Omit<RequestInit, 'body'> {
   body?: unknown
+  /** Optional Zod schema — when set, the response is validated at the boundary. */
+  schema?: z.ZodType<T>
 }
 
 // Registered by the app (dispatches `sessionExpired`) — keeps this module
@@ -45,14 +49,15 @@ const runRefresh = (): Promise<boolean> => {
 /**
  * Typed fetch wrapper: injects the in-memory access token, sends the (mock)
  * httpOnly refresh cookie via `credentials: 'include'`, retries once through a
- * single-flight refresh on 401, and normalizes errors to ApiError.
+ * single-flight refresh on 401, normalizes errors to ApiError, and (when a
+ * `schema` is given) validates the response — so a drifting real API fails loudly.
  */
 export const httpClient = async <T>(
   path: string,
-  options: HttpOptions = {},
+  options: HttpOptions<T> = {},
   retry = true,
 ): Promise<T> => {
-  const { body, headers: headerInit, ...rest } = options
+  const { body, schema, headers: headerInit, ...rest } = options
   const headers = new Headers(headerInit)
 
   const token = getAccessToken()
@@ -83,5 +88,6 @@ export const httpClient = async <T>(
   }
 
   if (response.status === 204) return undefined as T
-  return (await response.json()) as T
+  const json = await response.json()
+  return schema ? schema.parse(json) : (json as T)
 }

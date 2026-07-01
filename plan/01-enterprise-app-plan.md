@@ -778,6 +778,24 @@ build + Pages pipeline is unchanged.)_
 
 ---
 
+## Phase 9 — Real-backend readiness (post-build) · ✅ BUILT & VERIFIED (2026-07-01)
+
+Make swapping MSW for a real REST API an **environment change, not a code change**.
+
+- **One-switch toggle:** `VITE_API_MOCK` (opt-out — mock in dev, real API in prod, or forced either
+  way) gates whether MSW starts; `VITE_API_BASE_URL` points the http client anywhere. Parsed +
+  fail-fast in `shared/config/env.ts`.
+- **Response validation at the boundary:** `httpClient` takes an optional Zod `schema`; the auth
+  (`sessionSchema`/`userSchema`) and users (`usersListSchema`/`userSchema`) calls now validate
+  responses, so a drifting real API fails loudly instead of corrupting the UI. This fulfills §1's
+  "schemas reused for API parsing".
+- **Documented contract:** `docs/how-to/08-real-backend.md` lists every endpoint (method, auth,
+  status codes, shapes) a real backend must implement, plus CORS/cookie gotchas.
+- **Done when:** the gate is green, all tests pass, and setting `VITE_API_MOCK=false` +
+  a base URL runs the app against a real API with no code edit. — **verified green.**
+
+---
+
 ## 8. Resolved decisions (your answers)
 
 1. **API:** REST, **MSW-mocked only** — no real backend. MSW is the single mock backend for

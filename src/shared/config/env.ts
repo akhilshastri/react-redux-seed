@@ -8,6 +8,9 @@ import { z } from 'zod'
 const envSchema = z.object({
   VITE_API_BASE_URL: z.string().default('/api'),
   VITE_APP_NAME: z.string().default('React Redux Seed'),
+  // Controls whether the MSW mock backend starts. Unset → mock in dev, real API
+  // in prod. Set 'false' to run dev against a real API (see docs/how-to/08).
+  VITE_API_MOCK: z.enum(['true', 'false']).optional(),
 })
 
 const parsed = envSchema.safeParse(import.meta.env)

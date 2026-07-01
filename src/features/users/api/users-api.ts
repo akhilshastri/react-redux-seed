@@ -1,13 +1,16 @@
-import { type User, type UserInput } from '@/domain'
+import { z } from 'zod'
+
+import { type UserInput, userSchema } from '@/domain'
 import { httpClient } from '@/shared/api'
 
 import { type UsersQueryParams } from './query-keys'
 
-export interface UsersListResult {
-  rows: User[]
-  total: number
-  pageCount: number
-}
+export const usersListSchema = z.object({
+  rows: z.array(userSchema),
+  total: z.number().int().nonnegative(),
+  pageCount: z.number().int().positive(),
+})
+export type UsersListResult = z.infer<typeof usersListSchema>
 
 export const listUsers = (params: UsersQueryParams) => {
   const query = new URLSearchParams({
@@ -17,14 +20,14 @@ export const listUsers = (params: UsersQueryParams) => {
     page: String(params.page),
     pageSize: String(params.pageSize),
   })
-  return httpClient<UsersListResult>(`/users?${query.toString()}`)
+  return httpClient<UsersListResult>(`/users?${query.toString()}`, { schema: usersListSchema })
 }
 
 export const createUser = (input: UserInput) =>
-  httpClient<User>('/users', { method: 'POST', body: input })
+  httpClient('/users', { method: 'POST', body: input, schema: userSchema })
 
 export const updateUser = (id: string, input: UserInput) =>
-  httpClient<User>(`/users/${id}`, { method: 'PATCH', body: input })
+  httpClient(`/users/${id}`, { method: 'PATCH', body: input, schema: userSchema })
 
 export const bulkDeleteUsers = (ids: string[]) =>
   httpClient<void>('/users/bulk-delete', { method: 'POST', body: { ids } })
