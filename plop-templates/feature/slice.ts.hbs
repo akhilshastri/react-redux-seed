@@ -1,0 +1,25 @@
+import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
+
+export interface {{pascalCase name}}UiState {
+  selectedId: string | null
+}
+
+const initialState: {{pascalCase name}}UiState = {
+  selectedId: null,
+}
+
+export const {{camelCase name}}Slice = createSlice({
+  name: '{{camelCase name}}',
+  initialState,
+  reducers: {
+    set{{pascalCase name}}Selected: (state, action: PayloadAction<string | null>) => {
+      state.selectedId = action.payload
+    },
+  },
+  selectors: {
+    select{{pascalCase name}}Ui: (state) => state,
+  },
+})
+
+export const { set{{pascalCase name}}Selected } = {{camelCase name}}Slice.actions
+export const { select{{pascalCase name}}Ui } = {{camelCase name}}Slice.selectors

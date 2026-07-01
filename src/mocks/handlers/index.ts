@@ -1,6 +1,13 @@
-import { authHandlers } from './auth'
-import { healthHandlers } from './health'
-import { usersHandlers } from './users'
+import { type RequestHandler } from 'msw'
 
-// Phase 4 switches this to import.meta.glob auto-discovery.
-export const handlers = [...healthHandlers, ...authHandlers, ...usersHandlers]
+// Auto-discovery: every `handlers/*.ts` (except this index) that exports an
+// array of handlers is collected. A scaffolded handler wires in with zero edits.
+const modules = import.meta.glob<Record<string, unknown>>(['./*.ts', '!./index.ts'], {
+  eager: true,
+})
+
+export const handlers: RequestHandler[] = Object.values(modules).flatMap((module) =>
+  Object.values(module)
+    .filter((value): value is RequestHandler[] => Array.isArray(value))
+    .flat(),
+)

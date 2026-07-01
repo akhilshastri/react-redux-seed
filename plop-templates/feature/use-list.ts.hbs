@@ -1,0 +1,11 @@
+import { useQuery } from '@tanstack/react-query'
+
+import { httpClient } from '@/shared/api'
+
+import { {{camelCase name}}Keys } from './query-keys'
+
+export const use{{pascalCase name}}List = () =>
+  useQuery({
+    queryKey: {{camelCase name}}Keys.lists(),
+    queryFn: () => httpClient<unknown[]>('/{{kebabCase name}}'),
+  })

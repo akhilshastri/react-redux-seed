@@ -1,0 +1,14 @@
+import { use{{pascalCase name}}List } from '../api/use-{{kebabCase name}}'
+
+export const {{pascalCase name}}Page = () => {
+  const query = use{{pascalCase name}}List()
+
+  return (
+    <div className="grid gap-4">
+      <h1 className="text-xl font-semibold">{{pascalCase name}}</h1>
+      <pre className="text-sm text-muted-foreground">
+        {query.isPending ? 'Loading…' : JSON.stringify(query.data, null, 2)}
+      </pre>
+    </div>
+  )
+}
