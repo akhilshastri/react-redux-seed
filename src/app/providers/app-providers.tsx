@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 
+import { OfflineBanner, UpdateToast } from '@/app/pwa'
 import { useAppDispatch } from '@/app/store'
 import { loggedIn, refreshRequest } from '@/features/auth'
 import { setAccessToken } from '@/shared/api'
@@ -56,7 +57,9 @@ export const AppProviders = () => {
       <QueryProvider>
         <ThemeProvider>
           <AppBootstrap />
+          <OfflineBanner />
           <AppRouterProvider />
+          <UpdateToast />
         </ThemeProvider>
       </QueryProvider>
     </StoreProvider>
