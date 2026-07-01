@@ -7,6 +7,7 @@ import { AdminPage } from '@/app/pages/admin-page'
 import { HomePage } from '@/app/pages/home-page'
 import { LoginPage } from '@/app/pages/login-page'
 import { NotFoundPage } from '@/app/pages/not-found-page'
+import { UsersPage } from '@/app/pages/users-page'
 
 import { ProtectedRoute, RequireRole } from './guards'
 import { paths } from './paths'
@@ -26,6 +27,7 @@ export const router = createBrowserRouter([
             element: <DashboardLayout />,
             children: [
               { path: paths.home, element: <HomePage /> },
+              { path: paths.users, element: <UsersPage /> },
               {
                 element: <RequireRole permission="admin.access" />,
                 children: [{ path: paths.admin, element: <AdminPage /> }],

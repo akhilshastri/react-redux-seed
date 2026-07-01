@@ -10,3 +10,12 @@ export const userSchema = z.object({
 })
 
 export type User = z.infer<typeof userSchema>
+
+/** Create/edit form shape — a single primary role, stored as the `roles` array. */
+export const userInputSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  email: z.email('Enter a valid email'),
+  role: roleSchema,
+})
+
+export type UserInput = z.infer<typeof userInputSchema>

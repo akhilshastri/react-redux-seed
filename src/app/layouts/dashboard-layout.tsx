@@ -28,6 +28,9 @@ export const DashboardLayout = () => {
               <NavLink to={paths.home} end className={navLinkClass}>
                 Home
               </NavLink>
+              <NavLink to={paths.users} className={navLinkClass}>
+                Users
+              </NavLink>
               <Can permission="admin.access">
                 <NavLink to={paths.admin} className={navLinkClass}>
                   Admin

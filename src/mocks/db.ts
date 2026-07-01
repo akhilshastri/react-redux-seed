@@ -57,6 +57,137 @@ export const authenticate = (request: Request): string | null => {
 
 export const rolesFor = (userId: string): Role[] => findAccountById(userId)?.roles ?? []
 
+// --- Users resource (CRUD, server-driven list) ---
+
+const FIRST = [
+  'Ada',
+  'Alan',
+  'Grace',
+  'Linus',
+  'Margaret',
+  'Dennis',
+  'Katherine',
+  'Edsger',
+  'Barbara',
+  'Donald',
+  'Ken',
+  'Tim',
+  'Guido',
+  'Bjarne',
+  'James',
+  'Anders',
+  'Brendan',
+  'Rasmus',
+  'John',
+]
+const LAST = [
+  'Lovelace',
+  'Turing',
+  'Hopper',
+  'Torvalds',
+  'Hamilton',
+  'Ritchie',
+  'Johnson',
+  'Dijkstra',
+  'Liskov',
+  'Knuth',
+  'Thompson',
+  'Berners-Lee',
+  'van Rossum',
+  'Stroustrup',
+  'Gosling',
+  'Eich',
+]
+
+const seedUsers = (): User[] => {
+  const rows: User[] = []
+  for (let i = 0; i < 203; i += 1) {
+    const first = FIRST[i % FIRST.length] ?? 'Ada'
+    const last = LAST[(i * 7) % LAST.length] ?? 'Turing'
+    const role: Role = i % 5 === 0 ? 'admin' : 'viewer'
+    const handle = `${first}.${last}`.toLowerCase().replace(/[^a-z.]/g, '')
+    rows.push({
+      id: `usr_${i + 1}`,
+      name: `${first} ${last}`,
+      email: `${handle}${i + 1}@example.com`,
+      roles: [role],
+    })
+  }
+  return rows
+}
+
+let users: User[] = seedUsers()
+
+export interface ListUsersParams {
+  search: string
+  sortBy: string
+  sortDir: 'asc' | 'desc'
+  page: number
+  pageSize: number
+}
+
+export interface ListUsersResult {
+  rows: User[]
+  total: number
+  pageCount: number
+}
+
+const sortValue = (user: User, key: string): string =>
+  key === 'email' ? user.email : key === 'role' ? (user.roles[0] ?? '') : user.name
+
+export const listUsers = ({
+  search,
+  sortBy,
+  sortDir,
+  page,
+  pageSize,
+}: ListUsersParams): ListUsersResult => {
+  let result = users
+  const query = search.trim().toLowerCase()
+  if (query) {
+    result = result.filter(
+      (user) => user.name.toLowerCase().includes(query) || user.email.toLowerCase().includes(query),
+    )
+  }
+  const dir = sortDir === 'asc' ? 1 : -1
+  result = [...result].sort(
+    (a, b) => sortValue(a, sortBy).localeCompare(sortValue(b, sortBy)) * dir,
+  )
+
+  const total = result.length
+  const pageCount = Math.max(1, Math.ceil(total / pageSize))
+  const start = page * pageSize
+  return { rows: result.slice(start, start + pageSize), total, pageCount }
+}
+
+export const createUser = (input: { name: string; email: string; role: Role }): User => {
+  const user: User = {
+    id: `usr_${Date.now().toString(36)}`,
+    name: input.name,
+    email: input.email,
+    roles: [input.role],
+  }
+  users = [user, ...users]
+  return user
+}
+
+export const updateUser = (
+  id: string,
+  input: { name: string; email: string; role: Role },
+): User | undefined => {
+  const current = users.find((user) => user.id === id)
+  if (!current) return undefined
+  current.name = input.name
+  current.email = input.email
+  current.roles = [input.role]
+  return current
+}
+
+export const deleteUsers = (ids: string[]): void => {
+  const set = new Set(ids)
+  users = users.filter((user) => !set.has(user.id))
+}
+
 /**
  * Simulated httpOnly refresh cookie. A real app uses a server-set httpOnly
  * cookie; a browser-only MSW backend can't create one, so the "cookie" is the
