@@ -1,6 +1,6 @@
 # Enterprise React App — Build Plan (Redux Toolkit)
 
-**Status:** In progress · **Date:** 2026-06-30 (updated 2026-07-01) · **Redux Toolkit build — Phases 0–2 built & verified green; Phases 3–8 pending.**
+**Status:** Complete · **Date:** 2026-06-30 (updated 2026-07-01) · **Redux Toolkit build — all phases (0–8) built & verified green.**
 
 A greenfield, enterprise-grade React SPA built on **Node.js + Vite**, with **React Compiler**
 enabled, **Redux Toolkit** (client state), TanStack Query (server state), TanStack Table + Virtual
@@ -20,8 +20,19 @@ Pages — see Phase 8.) **No Storybook.**
 > client state is **unchanged and already proven**: TanStack Query (server state), the custom-JWT
 > auth security model, MSW-as-backend, the DataGrid, the PWA shell, the scaffolder, the testing
 > harness, the docs site, and the React Compiler toolchain. The Zustand build history lives in git
-> (prior revision of this file). Phase statuses below are therefore **re-planning targets**, not
-> "done" claims — the Redux versions have not been built yet.
+> (prior revision of this file).
+>
+> **Build outcome (2026-07-01):** the Redux Toolkit version is now **built and verified green
+> across all phases (0–8)** — one commit per phase (`feat: … (Phase N)`), each passing
+> typecheck + lint + build, with 6 Vitest + 2 Playwright tests green and the key flows verified
+> live in-browser (auth for both roles, the server-driven users grid + CRUD + API 403, theme
+> persistence, and the installable PWA shell). Notable real deviations from this plan's sketch are
+> recorded per phase below and in `AGENTS.md`: the compiler wiring uses `@rolldown/plugin-babel`'s
+> default export; logout navigation is declarative via `<ProtectedRoute>` (no router in the
+> listener); the DataGrid needs `autoResetPageIndex: false` to avoid a server-driven reset loop;
+> and the httpOnly refresh cookie is simulated by MSW's persisted session store. Phase 8's docs
+> site builds + serves locally; **actual GitHub Pages publishing needs a git remote** (none is
+> configured on this local repo).
 
 ---
 
@@ -680,7 +691,7 @@ collected with `import.meta.glob`, so a new handler file is picked up with zero 
   auth state is persisted — the session is restored purely via that mock cookie, so nothing
   auth-related touches `localStorage`. The listener's only job is `queryClient.clear()`.
 
-### Phase 3 — DataGrid + example `users` feature
+### Phase 3 — DataGrid + example `users` feature · ✅ BUILT & VERIFIED (2026-07-01)
 
 - `DataGrid` (Table + Virtual); `users` slice (**`users-slice`** — client-only filter/selection UI
   state): list (server-driven grid via MSW + TanStack Query), create/edit (RHF + Zod dialog),
@@ -695,7 +706,7 @@ collected with `import.meta.glob`, so a new handler file is picked up with zero 
   Query (no change). The DataGrid's `useReactTable` remains a documented compiler bail (TanStack
   Table memoizes itself); the rest of the page compiles.
 
-### Phase 4 — Scaffolder
+### Phase 4 — Scaffolder · ✅ BUILT & VERIFIED (2026-07-01)
 
 - Plop generators + templates for the reviewed three — **domain, feature, mock** (§5);
   `npm run gen` script.
@@ -706,7 +717,7 @@ collected with `import.meta.glob`, so a new handler file is picked up with zero 
   a Zustand store; the generator prints the one-line `root-reducer.ts` registration (§5). MSW
   handler auto-wiring is unchanged.
 
-### Phase 5 — Testing harness
+### Phase 5 — Testing harness · ✅ BUILT & VERIFIED (2026-07-01)
 
 - **Vitest + RTL** use MSW `setupServer` (Node — no service worker).
 - **Playwright drives a real browser, so it cannot use `setupServer`.** It runs against the
@@ -720,7 +731,7 @@ collected with `import.meta.glob`, so a new handler file is picked up with zero 
   isolated and can seed `preloadedState`. This is the Redux equivalent of resetting Zustand stores
   between tests; `setup.ts` keeps the MSW lifecycle + `resetDb` + RTL cleanup.
 
-### Phase 6 — PWA (installable shell)
+### Phase 6 — PWA (installable shell) · ✅ BUILT & VERIFIED (2026-07-01)
 
 - `vite-plugin-pwa` manifest + icons; Workbox app-shell precache; `registerSW` update flow →
   **`dispatch(ui/showUpdateToast())`** (direct, no bus); offline banner via `online/offline` →
@@ -731,7 +742,7 @@ collected with `import.meta.glob`, so a new handler file is picked up with zero 
 - **Redux delta:** the update/offline signals dispatch to the `ui` slice instead of calling a
   Zustand `ui-store` method — same single source of truth, now an action.
 
-### Phase 7 — Docs
+### Phase 7 — Docs · ✅ BUILT & VERIFIED (2026-07-01)
 
 - README (run/scaffold/conventions), ADRs for the §1 decisions (incl. React Compiler,
   MSW-as-backend, **Redux Toolkit for client state**, **listener-middleware cross-slice reactions**,
@@ -745,7 +756,7 @@ collected with `import.meta.glob`, so a new handler file is picked up with zero 
 
 ---
 
-## Phase 8 — Documentation site & GitHub Pages publishing (post-build)
+## Phase 8 — Documentation site & GitHub Pages publishing (post-build) · ✅ BUILT (2026-07-01)
 
 A "how-to" guide series for **users** of the seed, plus a published docs site. **This is the one
 place the "no deploy" rule (§1, §8) is carved out:** a docs-only pipeline, not application CI/CD.
