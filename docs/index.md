@@ -22,3 +22,5 @@ features:
 
 These guides are grounded in the real source and link the governing ADR or rule. Start at
 **Get started**, then follow the numbered guides to build an `invoices` feature end to end.
+
+The full source lives on [GitHub](https://github.com/akhilshastri/react-redux-seed).
